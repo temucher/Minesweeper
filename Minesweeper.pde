@@ -89,6 +89,15 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
+        if(keyPressed) {
+            marked = !marked;
+        }
+        else if(bombs.contains(this)) {
+            displayLosingMessage();
+        }
+        else if(countBombs(r,c)>0) {
+            label = countBombs(r,c);
+        }
         //your code here
     }
 
@@ -123,11 +132,21 @@ public class MSButton
     public int countBombs(int row, int col)
     {
         int numBombs = 0;
-        
+        int testR = r-1;
+        int testC = c-1;
+        for(int i = 0; i<=2;i++) {
+            for(int z = 0; z<=2; z++) {
+                if(buttons[testR+i][testC+z].isValid()) {
+                    if(bombs.contains(buttons[testR+i][testC+z])) {
+                        numBombs++;
+                    }
+                }
+            }
+        }
         //your code here
         return numBombs;
     }
 }
-
+//Work on mousePressed() method
 
 
