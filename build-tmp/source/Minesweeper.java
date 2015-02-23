@@ -61,18 +61,30 @@ public void draw ()
 }
 public boolean isWon()
 {
-    //your code here
-    return false;
+    boolean response = true;
+    for(int i = 0; i<=bombs.size(); i++) {
+        if(!bombs.get(i).isMarked()) {
+            response = false;
+        }
+    }
+    return response;
 }
 public void displayLosingMessage()
 {
-    textAlign(CENTER);
-    text("You suck",200,200);
+    String loseMsg = "You suck";
+    for(int i = 0; i<=7; i++) {
+        buttons[10][3+i].setLabel(loseMsg.substring(i-1,i));
+    }
+    // for(int z = 0; z<= bombs.size(); z++) {
+    //     if(!bombs.get(z).isMarked()) {bombs.get(z).marked = !marked;}
+    // }
 }
 public void displayWinningMessage()
 {    
-    textAlign(CENTER);
-    text("You are ok i guess",200,200);
+    String winMsg = "Congrats";
+    for(int i =0; i<=7; i++) {
+        buttons[10][3+i].setLabel(winMsg.substring(i-1,i));
+    }
 }
 
 public class MSButton
@@ -107,7 +119,22 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
-        //your code here
+        if(keyPressed) {
+            marked = !marked;
+        }
+        else if(bombs.contains(this)) {
+            displayLosingMessage();
+        }
+        else if(countBombs(r,c)>0) {
+            label = Integer.toString(countBombs(r,c));
+        }
+        else {
+            for(int i = 0; i<=2;i++) {
+                for(int z = 0; z<=2; z++) {
+                    buttons[r+i][c+z].mousePressed();
+                }
+            }
+        }
     }
 
     public void draw () 
@@ -129,19 +156,31 @@ public class MSButton
     {
         label = newLabel;
     }
+
     public boolean isValid(int r, int c)
     {
-        //your code here
-        return false;
+        return buttons.contains(this);
     }
+
     public int countBombs(int row, int col)
     {
         int numBombs = 0;
+        int testR = r-1;
+        int testC = c-1;
+        for(int i = 0; i<=2;i++) {
+            for(int z = 0; z<=2; z++) {
+                if(buttons[testR+i][testC+z].isValid()) {
+                    if(bombs.contains(buttons[testR+i][testC+z])) {
+                        numBombs++;
+                    }
+                }
+            }
+        }
         //your code here
         return numBombs;
     }
 }
-
+//debugging, trying to get it to run
 
 
   static public void main(String[] passedArgs) {

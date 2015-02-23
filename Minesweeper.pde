@@ -1,5 +1,7 @@
 //Teagan Mucher, Block 4 AP CS
 
+//General debugging issues, as well as some method problems
+
 import de.bezier.guido.*;
 //Declare and initialize NUM_ROWS and NUM_COLS = 20
 public final static int NUM_ROWS = 20;
@@ -43,18 +45,33 @@ public void draw ()
 }
 public boolean isWon()
 {
-    //your code here
-    return false;
+    boolean response = true;
+    for(int i = 0; i<=bombs.size(); i++) {
+        if(!bombs.get(i).isMarked()) {
+            response = false;
+        }
+    }
+    return response;
 }
 public void displayLosingMessage()
 {
-    textAlign(CENTER);
-    text("You suck",200,200);
+    String loseMsg = "You suck";
+    for(int i = 0; i<=7; i++) {
+        buttons[10][3+i].setLabel(loseMsg.substring(i-1,i));
+    }
+
+    //Having issues with marked. Not sure how to show all the bombs that are missed by user
+
+    // for(int z = 0; z<= bombs.size(); z++) {
+    //     if(!bombs.get(z).isMarked()) {bombs.get(z).marked = !marked;}
+    // }
 }
 public void displayWinningMessage()
 {    
-    textAlign(CENTER);
-    text("You are ok i guess",200,200);
+    String winMsg = "Congrats";
+    for(int i =0; i<=7; i++) {
+        buttons[10][3+i].setLabel(winMsg.substring(i-1,i));
+    }
 }
 
 public class MSButton
@@ -96,9 +113,15 @@ public class MSButton
             displayLosingMessage();
         }
         else if(countBombs(r,c)>0) {
-            label = countBombs(r,c);
+            label = Integer.toString(countBombs(r,c));
         }
-        //your code here
+        else {
+            for(int i = 0; i<=2;i++) {
+                for(int z = 0; z<=2; z++) {
+                    buttons[r+i][c+z].mousePressed();
+                }
+            }
+        }
     }
 
     public void draw () 
@@ -120,15 +143,13 @@ public class MSButton
     {
         label = newLabel;
     }
+
+    //Not sure what to do here. Compiler says i cant use .contains() for arrays
     public boolean isValid(int r, int c)
     {
-        if(buttons.contains(buttons(r,c))){
-            return true;
-        }
-        else {
-            return false;
-        }
+        return buttons.contains(this);
     }
+
     public int countBombs(int row, int col)
     {
         int numBombs = 0;
@@ -147,6 +168,6 @@ public class MSButton
         return numBombs;
     }
 }
-//Work on mousePressed() method
+
 
 
