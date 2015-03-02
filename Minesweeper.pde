@@ -21,7 +21,7 @@ void setup ()
             buttons[i][z] = new MSButton(i, z);
         }
     }
-    for(int i = 0; i<=20; i++){
+    for(int i = 0; i<=40; i++){
         setBombs();
     }
 }
@@ -30,47 +30,54 @@ public void setBombs()
     int row = (int)(Math.random()*20);
     int col = (int)(Math.random()*20);
     if(!bombs.contains(buttons[row][col])) {
-        bombs.add(new MSButton(row,col));
+        bombs.add(buttons[row][col]);
     }
 }
 
 public void draw ()
 {
+    if(isWon()) {
     background( 0 );
-    if(isWon())
         displayWinningMessage();
+    }
     else {
-        displayLosingMessage();
+        for(int i = 0; i<bombs.size(); i++) {
+            if(bombs.get(i).isClicked()==true) {
+                displayLosingMessage();
+            }
+        }
     }
 }
 public boolean isWon()
 {
-    boolean response = true;
-    for(int i = 0; i<=bombs.size(); i++) {
-        if(!bombs.get(i).isMarked()) {
-            response = false;
+    boolean response = false;
+    for(int i = 0; i<NUM_COLS; i++) {
+        for(int z = 0; z<NUM_ROWS; z++) {
+            if(buttons[i][z].clicked) {
+                if(i==NUM_COLS-1 && z==NUM_ROWS-1) {
+                    response = true;
+                }
+            }
+            else {
+                response = false;
+            }    
         }
+
     }
     return response;
 }
 public void displayLosingMessage()
 {
     String loseMsg = "You suck";
-    for(int i = 0; i<=7; i++) {
-        buttons[10][3+i].setLabel(loseMsg.substring(i-1,i));
+    for(int i = 1; i<=8; i++) {
+        buttons[10][5+i].setLabel(loseMsg.substring(i-1,i));
     }
-
-    //Having issues with marked. Not sure how to show all the bombs that are missed by user
-
-    // for(int z = 0; z<= bombs.size(); z++) {
-    //     if(!bombs.get(z).isMarked()) {bombs.get(z).marked = !marked;}
-    // }
 }
 public void displayWinningMessage()
 {    
     String winMsg = "Congrats";
-    for(int i =0; i<=7; i++) {
-        buttons[10][3+i].setLabel(winMsg.substring(i-1,i));
+    for(int i =1; i<=8; i++) {
+        buttons[10][5+i].setLabel(winMsg.substring(i-1,i));
     }
 }
 
@@ -112,15 +119,18 @@ public class MSButton
         else if(bombs.contains(this)) {
             displayLosingMessage();
         }
-        else if(countBombs(r,c)>0) {
+        else if(this.countBombs(r,c)>0) {
             label = Integer.toString(countBombs(r,c));
         }
         else {
-            for(int i = 0; i<=2;i++) {
-                for(int z = 0; z<=2; z++) {
-                    buttons[r+i][c+z].mousePressed();
-                }
-            }
+            if((isValid(r-1,c-1)) && (buttons[r-1][c-1].clicked == false)) {buttons[r-1][c-1].mousePressed();}
+            if((isValid(r,c-1)) && (buttons[r][c-1].clicked == false)) {buttons[r][c-1].mousePressed();}
+            if((isValid(r+1,c-1)) && (buttons[r+1][c-1].clicked == false)) {buttons[r+1][c-1].mousePressed();}
+            if((isValid(r-1,c)) && (buttons[r-1][c].clicked == false)) {buttons[r-1][c].mousePressed();}
+            if((isValid(r+1,c)) && (buttons[r+1][c].clicked == false)) {buttons[r+1][c].mousePressed();}
+            if((isValid(r-1,c+1)) && (buttons[r-1][c+1].clicked == false)) {buttons[r-1][c+1].mousePressed();}
+            if((isValid(r,c+1)) && (buttons[r][c+1].clicked == false)) {buttons[r][c+1].mousePressed();}
+            if((isValid(r+1,c+1)) && (buttons[r+1][c+1].clicked == false)) {buttons[r+1][c+1].mousePressed();}
         }
     }
 
@@ -144,30 +154,22 @@ public class MSButton
         label = newLabel;
     }
 
-    //Not sure what to do here. Compiler says i cant use .contains() for arrays
     public boolean isValid(int r, int c)
     {
-        return buttons.contains(this);
+        return ((r<20 && c<20) && (r>=0 && c>=0));
     }
 
-    public int countBombs(int row, int col)
+    public int countBombs(int r, int c)
     {
         int numBombs = 0;
-        int testR = r-1;
-        int testC = c-1;
-        for(int i = 0; i<=2;i++) {
-            for(int z = 0; z<=2; z++) {
-                if(buttons[testR+i][testC+z].isValid()) {
-                    if(bombs.contains(buttons[testR+i][testC+z])) {
-                        numBombs++;
-                    }
-                }
-            }
-        }
-        //your code here
+        if(isValid(r-1,c-1) && bombs.contains(buttons[r-1][c-1])) {numBombs++;}
+        if(isValid(r-1,c) && bombs.contains(buttons[r-1][c])) {numBombs++;}
+        if(isValid(r-1,c+1) && bombs.contains(buttons[r-1][c+1])) {numBombs++;}
+        if(isValid(r,c-1) && bombs.contains(buttons[r][c-1])) {numBombs++;}
+        if(isValid(r,c+1) && bombs.contains(buttons[r][c+1])) {numBombs++;}
+        if(isValid(r+1,c-1) && bombs.contains(buttons[r+1][c-1])) {numBombs++;}
+        if(isValid(r+1,c) && bombs.contains(buttons[r+1][c])) {numBombs++;}
+        if(isValid(r+1,c+1) && bombs.contains(buttons[r+1][c+1])) {numBombs++;}
         return numBombs;
     }
 }
-
-
-
