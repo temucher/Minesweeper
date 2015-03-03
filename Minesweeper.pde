@@ -1,13 +1,13 @@
 //Teagan Mucher, Block 4 AP CS
 
-//General debugging issues, as well as some method problems
-
 import de.bezier.guido.*;
 //Declare and initialize NUM_ROWS and NUM_COLS = 20
 public final static int NUM_ROWS = 20;
 public final static int NUM_COLS = 20;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> bombs = new ArrayList();
+boolean response = false;
+boolean gameOver = false;
 void setup ()
 {
     size(400, 400);
@@ -36,35 +36,26 @@ public void setBombs()
 
 public void draw ()
 {
-    if(isWon()) {
-    background( 0 );
-        displayWinningMessage();
-    }
-    else {
-        for(int i = 0; i<bombs.size(); i++) {
-            if(bombs.get(i).isClicked()==true) {
-                displayLosingMessage();
-            }
+    if(gameOver == false) {
+        if(isWon()) {
+            background( 0 );
+            displayWinningMessage();
+            gameOver = true;
         }
     }
 }
 public boolean isWon()
 {
-    boolean response = false;
-    for(int i = 0; i<NUM_COLS; i++) {
-        for(int z = 0; z<NUM_ROWS; z++) {
-            if(buttons[i][z].clicked) {
-                if(i==NUM_COLS-1 && z==NUM_ROWS-1) {
-                    response = true;
+    for(int z =0; z<NUM_ROWS; z++) {
+        for(int x = 0; x<NUM_COLS; x++) {
+            if(!bombs.contains(buttons[z][x]) && buttons[z][x].isClicked()) {
+                if(z==NUM_ROWS-1 && x ==NUM_COLS-1) {
+                    return true;
                 }
             }
-            else {
-                response = false;
-            }    
         }
-
     }
-    return response;
+    return false;
 }
 public void displayLosingMessage()
 {
@@ -118,6 +109,7 @@ public class MSButton
         }
         else if(bombs.contains(this)) {
             displayLosingMessage();
+            gameOver = true;
         }
         else if(this.countBombs(r,c)>0) {
             label = Integer.toString(countBombs(r,c));
